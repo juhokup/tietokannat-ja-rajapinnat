@@ -1,0 +1,107 @@
+Tietokannat ja rajapinnat
+
+6. Pet ja owner
+
+Muuta aikaisemmin tehdyn pet-taulun rakenne oppimateriaalissa esitetyn kaltaiseksi, 
+eli meillä on kaksi taulua, pet ja owner ja niiden välillä yhdestä moneen-yhteys.
+Esitä vastauksessasi tarvittavat SQL-lauseet sekä taulujen rakenne DESC-lauseella.
+
+VASTAUS:
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| employees          |
+| information_schema |
+| mysql              |
+| performance_schema |
+| pets               |
+| phpmyadmin         |
+| sakila             |
+| sys                |
+| test_db            |
++--------------------+
+9 rows in set (0.01 sec)
+
+mysql> use pets;
+Database changed
+
+mysql> show tables;
++----------------+
+| Tables_in_pets |
++----------------+
+| owner          |
+| pet            |
++----------------+
+2 rows in set (0.01 sec)
+
+mysql> desc owner;
++------------+--------------+------+-----+---------+----------------+
+| Field      | Type         | Null | Key | Default | Extra          |
++------------+--------------+------+-----+---------+----------------+
+| first_name | varchar(255) | YES  |     | NULL    |                |
+| last_name  | varchar(255) | YES  |     | NULL    |                |
+| address    | varchar(255) | YES  |     | NULL    |                |
+| ownerID    | int          | NO   | PRI | NULL    | auto_increment |
++------------+--------------+------+-----+---------+----------------+
+4 rows in set (0.02 sec)
+
+mysql> desc pet;
++---------+-------------+------+-----+---------+----------------+
+| Field   | Type        | Null | Key | Default | Extra          |
++---------+-------------+------+-----+---------+----------------+
+| name    | varchar(20) | YES  |     | NULL    |                |
+| species | varchar(20) | YES  |     | NULL    |                |
+| sex     | char(1)     | YES  |     | NULL    |                |
+| birth   | date        | YES  |     | NULL    |                |
+| death   | date        | YES  |     | NULL    |                |
+| petID   | int         | NO   | PRI | NULL    | auto_increment |
+| ownerID | int         | YES  | MUL | NULL    |                |
++---------+-------------+------+-----+---------+----------------+
+7 rows in set (0.00 sec)
+
+mysql> select * from pet;
++----------+---------+------+------------+------------+-------+---------+
+| name     | species | sex  | birth      | death      | petID | ownerID |
++----------+---------+------+------------+------------+-------+---------+
+| Fluffy   | cat     | f    | 1993-02-04 | NULL       |     1 |       1 |
+| Claws    | cat     | m    | 1994-03-17 | NULL       |     2 |       2 |
+| Buffy    | dog     | f    | 1989-05-13 | NULL       |     3 |       1 |
+| Fang     | dog     | m    | 1990-08-27 | NULL       |     4 |       3 |
+| Bowser   | dog     | m    | 1998-08-31 | 1995-07-29 |     5 |       4 |
+| Chirpy   | bird    | f    | 1998-09-11 | 2000-09-15 |     6 |       2 |
+| Whistler | bird    |      | 1997-12-09 | NULL       |     7 |       2 |
+| Slim     | snake   | m    | 1996-04-29 | NULL       |     8 |       3 |
++----------+---------+------+------------+------------+-------+---------+
+8 rows in set (0.00 sec)
+
+mysql> select * from owner;
++------------+-----------+---------------+---------+
+| first_name | last_name | address       | ownerID |
++------------+-----------+---------------+---------+
+| Harold     | Lloyd     | Someaddress 1 |       1 |
+| Gwen       | Stefani   | Someaddress 2 |       2 |
+| Benny      | Hill      | Someaddress 3 |       3 |
+| Diane      | Keaton    | Someaddress 4 |       4 |
++------------+-----------+---------------+---------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT owner.ownerID, CONCAT(owner.first_name, ' ', owner.last_name) AS owner,
+    -> pet.name AS pet_name, pet.species, pet.sex, pet.birth, pet.death, pet.petID
+    -> FROM owner
+    -> JOIN pet ON owner.ownerID = pet.ownerID
+    -> ORDER BY owner, pet.name;
++---------+--------------+----------+---------+------+------------+------------+-------+
+| ownerID | owner        | pet_name | species | sex  | birth      | death      | petID |
++---------+--------------+----------+---------+------+------------+------------+-------+
+|       3 | Benny Hill   | Fang     | dog     | m    | 1990-08-27 | NULL       |     4 |
+|       3 | Benny Hill   | Slim     | snake   | m    | 1996-04-29 | NULL       |     8 |
+|       4 | Diane Keaton | Bowser   | dog     | m    | 1998-08-31 | 1995-07-29 |     5 |
+|       2 | Gwen Stefani | Chirpy   | bird    | f    | 1998-09-11 | 2000-09-15 |     6 |
+|       2 | Gwen Stefani | Claws    | cat     | m    | 1994-03-17 | NULL       |     2 |
+|       2 | Gwen Stefani | Whistler | bird    |      | 1997-12-09 | NULL       |     7 |
+|       1 | Harold Lloyd | Buffy    | dog     | f    | 1989-05-13 | NULL       |     3 |
+|       1 | Harold Lloyd | Fluffy   | cat     | f    | 1993-02-04 | NULL       |     1 |
++---------+--------------+----------+---------+------+------------+------------+-------+
+8 rows in set (0.00 sec)

@@ -1,0 +1,104 @@
+Tietokannat ja rajapinnat
+5.Employees, osa 1
+
+a) Minkä nimisiä osastoja (Departments) Employees-tietokannassa on ?
+
+VASTAUS: SELECT * FROM departments;
+TULOSTUS:
++---------+--------------------+
+| dept_no | dept_name          |
++---------+--------------------+
+| d009    | Customer Service   |
+| d005    | Development        |
+| d002    | Finance            |
+| d003    | Human Resources    |
+| d001    | Marketing          |
+| d004    | Production         |
+| d006    | Quality Management |
+| d008    | Research           |
+| d007    | Sales              |
++---------+--------------------+
+**********************************************************************************************
+
+b) Tulosta, (yhden kerran kukin) mitä nimikkeitä (title) tietokannassa on.
+
+VASTAUS: mysql> SELECT DISTINCT title FROM titles;
+TULOSTUS:
++--------------------+
+| title              |
++--------------------+
+| Senior Engineer    |
+| Staff              |
+| Engineer           |
+| Senior Staff       |
+| Assistant Engineer |
+| Technique Leader   |
+| Manager            |
++--------------------+
+**********************************************************************************************
+
+c) Mikä on suurin ja pienin palkka (salary) ? VIHJE: MIN, MAX
+
+VASTAUS: SELECT MAX(salary) AS max_salary, MIN(salary) AS min_salary FROM salaries;
+TULOSTUS:
++------------+------------+
+| max_salary | min_salary |
++------------+------------+
+|     158220 |      38623 |
++------------+------------+
+**********************************************************************************************
+
+d) Mikä on keskimääräinen palkka ? VIHJE: AVG
+
+VASTAUS: SELECT AVG(salary) AS average_salary FROM salaries;
+TULOSTUS:
++----------------+
+| average_salary |
++----------------+
+|     63810.7448 |
++----------------+
+**********************************************************************************************
+
+e) Tulosta kaikki työntekijät, joiden sukunimi on Facello.
+
+VASTAUS: SELECT * FROM employees WHERE last_name = 'Facello';
+
+TULOSTUS: (Vain osa. Alkuperäisen tulostuksen pituus 186 riviä)
++--------+------------+-------------+-----------+--------+------------+
+| emp_no | birth_date | first_name  | last_name | gender | hire_date  |
++--------+------------+-------------+-----------+--------+------------+
+|  10001 | 1953-09-02 | Georgi      | Facello   | M      | 1986-06-26 |
+|  10327 | 1954-04-01 | Roded       | Facello   | M      | 1987-09-18 |
+|  12751 | 1964-07-06 | Nahum       | Facello   | M      | 1995-01-09 |
+|  15346 | 1959-09-26 | Kirk        | Facello   | F      | 1991-12-07 |
+|  15685 | 1958-07-12 | Kasturi     | Facello   | M      | 1992-03-13 |
+|  18686 | 1962-02-23 | Kwangyoen   | Facello   | F      | 1985-05-02 |
+|  19041 | 1957-05-29 | Billur      | Facello   | F      | 1992-08-03 |
+|  21947 | 1954-06-18 | Taisook     | Facello   | F      | 1991-07-30 |
+|  23938 | 1955-07-11 | Nahum       | Facello   | M      | 1985-09-15 |
+|  24774 | 1956-09-23 | Uno         | Facello   | F      | 1989-11-09 |
+**********************************************************************************************
+
+f) Kuinka moni työntekijä on syntynyt 1950-luvulla ?
+
+VASTAUS 1: SELECT COUNT(*) FROM employees WHERE YEAR(birth_date) BETWEEN 1950 AND 1959;
+VASTAUS 2: SELECT COUNT(*) FROM employees WHERE birth_date BETWEEN '1950-01-01' AND '1959-12-31';
+
+TULOSTUS: molemmat vastaukset palauttavat saman tulostuksen
++----------+
+| COUNT(*) |
++----------+
+|   182886 |
++----------+
+**********************************************************************************************
+
+g) Montako miestä ja montako naista työntekijöissä on?
+
+VASTAUS: SELECT gender, COUNT(*) AS count FROM employees GROUP BY gender;
+TULOSTUS:
++--------+--------+
+| gender | count  |
++--------+--------+
+| M      | 179973 |
+| F      | 120051 |
++--------+--------+

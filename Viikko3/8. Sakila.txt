@@ -1,0 +1,114 @@
+Tietokannat ja rajapinnat
+
+8. Sakila
+
+a) Tulosta DVD-elokuvien kielet (language) aakkosjärjestyksessä
+
+VASTAUS 1: Jos halutaan vain sakila-databaseen ilmoitetut elokuvien kielet
+select * from language ORDER BY name;
+
+TULOSTUS:
++-------------+----------+---------------------+
+| language_id | name     | last_update         |
++-------------+----------+---------------------+
+|           1 | English  | 2006-02-15 05:02:19 |
+|           5 | French   | 2006-02-15 05:02:19 |
+|           6 | German   | 2006-02-15 05:02:19 |
+|           2 | Italian  | 2006-02-15 05:02:19 |
+|           3 | Japanese | 2006-02-15 05:02:19 |
+|           4 | Mandarin | 2006-02-15 05:02:19 |
++-------------+----------+---------------------+
+
+-------------------------TAI-------------------------
+
+VASTAUS 2: Jos halutaan tietoja elokuvasta ja järjestetään elokuvat kielen perusteella
+SELECT film.film_id, film.title, film.release_year, language.name
+FROM film
+JOIN language ON film.language_id = language.language_id
+ORDER BY language.name;
+
+TULOSTUS: oikeasti 1000 riviä, liitetty vain alku
++---------+-----------------------------+--------------+---------+
+| film_id | title                       | release_year | name    |
++---------+-----------------------------+--------------+---------+
+|     853 | STRANGER STRANGERS          |         2006 | English |
+|     854 | STRANGERS GRAFFITI          |         2006 | English |
+|     855 | STREAK RIDGEMONT            |         2006 | English |
+|     856 | STREETCAR INTENTIONS        |         2006 | English |
+|     857 | STRICTLY SCARFACE           |         2006 | English |
+|     858 | SUBMARINE BED               |         2006 | English |
+|     859 | SUGAR WONKA                 |         2006 | English |
+**********************************************************************************************
+
+b) Tulosta kaikkien niiden näyttelijöiden elokuvat, joiden sukunimi on Temple.
+
+VASTAUS:
+SELECT actor.actor_id, actor.first_name, actor.last_name, 
+film.film_id, film.title, film.release_year
+FROM actor
+JOIN film_actor ON actor.actor_id = film_actor.actor_id
+JOIN film ON film_actor.film_id = film.film_id
+WHERE actor.last_name = 'Temple';
+
+TULOSTUS: oikeasti 104 riviä pitkä, kopioitu vain osa
++----------+------------+-----------+---------+-------------------------+--------------+
+| actor_id | first_name | last_name | film_id | title                   | release_year |
++----------+------------+-----------+---------+-------------------------+--------------+
+|       53 | MENA       | TEMPLE    |       1 | ACADEMY DINOSAUR        |         2006 |
+|       53 | MENA       | TEMPLE    |       9 | ALABAMA DEVIL           |         2006 |
+|       53 | MENA       | TEMPLE    |      51 | BALLOON HOMEWARD        |         2006 |
+|       53 | MENA       | TEMPLE    |      58 | BEACH HEARTBREAKERS     |         2006 |
+|       53 | MENA       | TEMPLE    |     109 | BUTTERFLY CHOCOLAT      |         2006 |
+|       53 | MENA       | TEMPLE    |     122 | CARRIE BUNCH            |         2006 |
+**********************************************************************************************
+
+c) Tulosta elokuvassa "Ghost Groundhog" näytelleet näyttelijät.
+
+VASTAUS:
+select actors AS '"Ghost Groundhog" actors' 
+from film_list where title = 'Ghost Groundhog';
+
+TULOSTUS:
++---------------------------------------------------------------------+
+| "Ghost Groundhog" actors                                            |
++---------------------------------------------------------------------+
+| DAN HARRIS, KENNETH TORN, KEVIN GARLAND, RUSSELL TEMPLE, RENEE BALL |
++---------------------------------------------------------------------+
+
+**********************************************************************************************
+
+d) Montako kauhuelokuvaa ("Horror") tietokannassa on ?
+
+VASTAUS:
+SELECT COUNT(*) AS 'Horror movie count'
+FROM category
+JOIN film_category ON category.category_id = film_category.category_id
+WHERE category.name = 'Horror';
+
+TULOSTUS:
++--------------------+
+| Horror movie count |
++--------------------+
+|                 56 |
++--------------------+
+**********************************************************************************************
+
+e) Tulosta kaikki kauhuelokuvat.
+
+VASTAUS:
+SELECT film.title AS 'Horror movie titles', film.release_year
+FROM category
+JOIN film_category ON category.category_id = film_category.category_id
+JOIN film ON film_category.film_id = film.film_id
+WHERE category.name = 'Horror';
+
+TULOSTUS: oikeasti 56 riviä, kopioitu vain osa
++-----------------------------+--------------+
+| Horror movie titles         | release_year |
++-----------------------------+--------------+
+| ACE GOLDFINGER              |         2006 |
+| AFFAIR PREJUDICE            |         2006 |
+| AIRPORT POLLOCK             |         2006 |
+| ALABAMA DEVIL               |         2006 |
+| ALI FOREVER                 |         2006 |
+**********************************************************************************************
