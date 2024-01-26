@@ -4,7 +4,8 @@ Tietokannat ja rajapinnat
 
 a) Tulosta DVD-elokuvien kielet (language) aakkosjärjestyksessä
 
-VASTAUS 1: Jos halutaan vain sakila-databaseen ilmoitetut elokuvien kielet
+VASTAUS 1: Jos halutaan vain sakila-databasen language-tauluun ilmoitetut kielet:
+
 select * from language ORDER BY name;
 
 TULOSTUS:
@@ -21,13 +22,14 @@ TULOSTUS:
 
 -------------------------TAI-------------------------
 
-VASTAUS 2: Jos halutaan tietoja elokuvasta ja järjestetään elokuvat kielen perusteella
+VASTAUS 2: Mutta jos halutaan tulostaa elokuvat ja järjestetään ne kielen perusteella
+
 SELECT film.film_id, film.title, film.release_year, language.name
 FROM film
 JOIN language ON film.language_id = language.language_id
 ORDER BY language.name;
 
-TULOSTUS: oikeasti 1000 riviä, liitetty vain alku
+TULOSTUS: 1000 riviä pitkä, kopioitu vain osa
 +---------+-----------------------------+--------------+---------+
 | film_id | title                       | release_year | name    |
 +---------+-----------------------------+--------------+---------+
@@ -43,6 +45,7 @@ TULOSTUS: oikeasti 1000 riviä, liitetty vain alku
 b) Tulosta kaikkien niiden näyttelijöiden elokuvat, joiden sukunimi on Temple.
 
 VASTAUS:
+
 SELECT actor.actor_id, actor.first_name, actor.last_name, 
 film.film_id, film.title, film.release_year
 FROM actor
@@ -50,7 +53,8 @@ JOIN film_actor ON actor.actor_id = film_actor.actor_id
 JOIN film ON film_actor.film_id = film.film_id
 WHERE actor.last_name = 'Temple';
 
-TULOSTUS: oikeasti 104 riviä pitkä, kopioitu vain osa
+
+TULOSTUS: 104 riviä pitkä, kopioitu vain osa
 +----------+------------+-----------+---------+-------------------------+--------------+
 | actor_id | first_name | last_name | film_id | title                   | release_year |
 +----------+------------+-----------+---------+-------------------------+--------------+
@@ -65,8 +69,8 @@ TULOSTUS: oikeasti 104 riviä pitkä, kopioitu vain osa
 c) Tulosta elokuvassa "Ghost Groundhog" näytelleet näyttelijät.
 
 VASTAUS:
-select actors AS '"Ghost Groundhog" actors' 
-from film_list where title = 'Ghost Groundhog';
+SELECT actors AS '"Ghost Groundhog" actors' 
+FROM film_list WHERE title = 'Ghost Groundhog';
 
 TULOSTUS:
 +---------------------------------------------------------------------+
@@ -95,14 +99,15 @@ TULOSTUS:
 
 e) Tulosta kaikki kauhuelokuvat.
 
-VASTAUS:
+VASTAUS: Tulostan vain tarvittavat tiedot sen sijaan, että kaikki tiedot paukahtaisi näytölle per elokuva... (SELECT * FROM category)
+
 SELECT film.title AS 'Horror movie titles', film.release_year
 FROM category
 JOIN film_category ON category.category_id = film_category.category_id
 JOIN film ON film_category.film_id = film.film_id
 WHERE category.name = 'Horror';
 
-TULOSTUS: oikeasti 56 riviä, kopioitu vain osa
+TULOSTUS: 56 riviä pitkä, kopioitu vain osa
 +-----------------------------+--------------+
 | Horror movie titles         | release_year |
 +-----------------------------+--------------+

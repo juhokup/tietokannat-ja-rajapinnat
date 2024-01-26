@@ -70,14 +70,15 @@ Seuraavissa tehtävissä tarvitaan tietoja useammasta kuin yhdestä taulusta (JO
 d) Kenellä on suurin palkka ? Tulosta etunimi, sukunimi ja palkka.
 
 VASTAUS: 
-SELECT employees.first_name, employees.last_name, salaries.salary
+SELECT employees.first_name, employees.last_name, MAX(salaries.salary) AS Salary
 FROM employees
 JOIN salaries ON employees.emp_no = salaries.emp_no
-ORDER BY salaries.salary DESC LIMIT 1;
+GROUP BY employees.first_name, employees.last_name
+ORDER BY Salary DESC LIMIT 1;
 
 TULOSTUS:
 +------------+-----------+--------+
-| first_name | last_name | salary |
+| first_name | last_name | Salary |
 +------------+-----------+--------+
 | Tokuyasu   | Pesch     | 158220 |
 +------------+-----------+--------+
@@ -86,14 +87,15 @@ TULOSTUS:
 e) Kenellä on pienin palkka ? Tulosta etunimi, sukunimi ja palkka.
 
 VASTAUS: 
-SELECT employees.first_name, employees.last_name, salaries.salary
+SELECT employees.first_name, employees.last_name, MIN(salaries.salary) AS Salary
 FROM employees
 JOIN salaries ON employees.emp_no = salaries.emp_no
-ORDER BY salaries.salary ASC LIMIT 1;
+GROUP BY employees.first_name, employees.last_name
+ORDER BY Salary ASC LIMIT 1;
 
 TULOSTUS:
 +------------+-----------+--------+
-| first_name | last_name | salary |
+| first_name | last_name | Salary |
 +------------+-----------+--------+
 | Olivera    | Baek      |  38623 |
 +------------+-----------+--------+
@@ -102,89 +104,99 @@ TULOSTUS:
 f) Tulosta työntekijät (etunimi, sukunimi, palkka), jotka ansaitsevat yli 150000. 
 
 VASTAUS: 
-SELECT employees.first_name, employees.last_name, salaries.salary
+SELECT employees.first_name, employees.last_name, MAX(salaries.salary) AS Salary
 FROM employees
 JOIN salaries ON employees.emp_no = salaries.emp_no
-WHERE salaries.salary > 150000;
+GROUP BY employees.emp_no, employees.first_name, employees.last_name
+HAVING MAX(salaries.salary) > 150000
+ORDER BY Salary DESC;
 
-TULOSTUS: oikeasti 36 riviä pitkä, mutta tähän liitetty vain alkuosa
+TULOSTUS:
 +------------+-----------+--------+
-| first_name | last_name | salary |
+| first_name | last_name | Salary |
 +------------+-----------+--------+
-| Tokuyasu   | Pesch     | 151115 |
-| Tokuyasu   | Pesch     | 153166 |
-| Tokuyasu   | Pesch     | 153458 |
-| Tokuyasu   | Pesch     | 157821 |
 | Tokuyasu   | Pesch     | 158220 |
-| Ibibia     | Junet     | 150345 |
-| Xiahua     | Whitcomb  | 151929 |
+| Honesty    | Mukaidono | 156286 |
 | Xiahua     | Whitcomb  | 155709 |
+| Sanjai     | Luders    | 155513 |
+| Tsutomu    | Alameldin | 155377 |
+| Willard    | Baca      | 154459 |
+| Lidong     | Meriste   | 154376 |
+| Charmane   | Griswold  | 153715 |
+| Weijing    | Chenoweth | 152710 |
+| Weicheng   | Hatcliff  | 152687 |
+| Shin       | Birdsall  | 152412 |
+| Mitsuyuki  | Stanfel   | 152220 |
+| Mohammed   | Moehrke   | 150740 |
+| Ibibia     | Junet     | 150345 |
 | Lansing    | Kambil    | 150052 |
++------------+-----------+--------+
 **********************************************************************************************
 
 g) Kuinka monta työntekijää työskentelee myynnissä (Sales) ? Entä markkinoinnissa (Marketing) ?
 
 VASTAUS: 
-SELECT departments.dept_name, COUNT(*) AS employee_count
+SELECT departments.dept_name AS Department, COUNT(*) AS 'Employee count'
 FROM current_dept_emp
 JOIN departments ON current_dept_emp.dept_no = departments.dept_no
 WHERE departments.dept_name IN ('Marketing', 'Sales')
 GROUP BY departments.dept_name;
 
 TULOSTUS:
-+-----------+----------------+
-| dept_name | employee_count |
-+-----------+----------------+
-| Sales     |          46922 |
-| Marketing |          18426 |
-+-----------+----------------+
++------------+----------------+
+| Department | Employee count |
++------------+----------------+
+| Marketing  |          18426 |
+| Sales      |          46922 |
++------------+----------------+
 **********************************************************************************************
 
 h) Tulosta kaikkien osastonjohtajien (Department Managers) etunimi, sukunimi ja osasto, jolla työskentelee.
 
 VASTAUS: 
-SELECT dept_manager.dept_no, departments.dept_name, employees.first_name, employees.last_name
+SELECT employees.first_name, employees.last_name, departments.dept_name AS Department
 FROM dept_manager
 JOIN departments ON dept_manager.dept_no = departments.dept_no
-JOIN employees ON dept_manager.emp_no = employees.emp_no;
+JOIN employees ON dept_manager.emp_no = employees.emp_no
+ORDER BY departments.dept_name, employees.last_name;
 
 TULOSTUS:
-+---------+--------------------+-------------+--------------+
-| dept_no | dept_name          | first_name  | last_name    |
-+---------+--------------------+-------------+--------------+
-| d009    | Customer Service   | Tonny       | Butterworth  |
-| d009    | Customer Service   | Marjo       | Giarratana   |
-| d009    | Customer Service   | Xiaobin     | Spinelli     |
-| d009    | Customer Service   | Yuchang     | Weedman      |
-| d005    | Development        | DeForest    | Hagimont     |
-| d005    | Development        | Leon        | DasSarma     |
-| d002    | Finance            | Ebru        | Alpin        |
-| d002    | Finance            | Isamu       | Legleitner   |
-| d003    | Human Resources    | Shirish     | Ossenbruggen |
-| d003    | Human Resources    | Karsten     | Sigstam      |
-| d001    | Marketing          | Margareta   | Markovitch   |
-| d001    | Marketing          | Vishwani    | Minakawa     |
-| d004    | Production         | Krassimir   | Wegerle      |
-| d004    | Production         | Rosine      | Cools        |
-| d004    | Production         | Shem        | Kieras       |
-| d004    | Production         | Oscar       | Ghazalie     |
-| d006    | Quality Management | Peternela   | Onuegbe      |
-| d006    | Quality Management | Rutger      | Hofmeyr      |
-| d006    | Quality Management | Sanjoy      | Quadeer      |
-| d006    | Quality Management | Dung        | Pesch        |
-| d008    | Research           | Arie        | Staelin      |
-| d008    | Research           | Hilary      | Kambil       |
-| d007    | Sales              | Przemyslawa | Kaelbling    |
-| d007    | Sales              | Hauke       | Zhang        |
-+---------+--------------------+-------------+--------------+
++-------------+--------------+--------------------+
+| first_name  | last_name    | Department         |
++-------------+--------------+--------------------+
+| Tonny       | Butterworth  | Customer Service   |
+| Marjo       | Giarratana   | Customer Service   |
+| Xiaobin     | Spinelli     | Customer Service   |
+| Yuchang     | Weedman      | Customer Service   |
+| Leon        | DasSarma     | Development        |
+| DeForest    | Hagimont     | Development        |
+| Ebru        | Alpin        | Finance            |
+| Isamu       | Legleitner   | Finance            |
+| Shirish     | Ossenbruggen | Human Resources    |
+| Karsten     | Sigstam      | Human Resources    |
+| Margareta   | Markovitch   | Marketing          |
+| Vishwani    | Minakawa     | Marketing          |
+| Rosine      | Cools        | Production         |
+| Oscar       | Ghazalie     | Production         |
+| Shem        | Kieras       | Production         |
+| Krassimir   | Wegerle      | Production         |
+| Rutger      | Hofmeyr      | Quality Management |
+| Peternela   | Onuegbe      | Quality Management |
+| Dung        | Pesch        | Quality Management |
+| Sanjoy      | Quadeer      | Quality Management |
+| Hilary      | Kambil       | Research           |
+| Arie        | Staelin      | Research           |
+| Przemyslawa | Kaelbling    | Sales              |
+| Hauke       | Zhang        | Sales              |
++-------------+--------------+--------------------+
 
 **********************************************************************************************
 
 i) Mikä on myynnissä työskentelevien keskipalkka ? Entä markkinoinnissa ?
 
 VASTAUS: 
-SELECT departments.dept_name,
-ROUND(AVG(salaries.salary), 2) AS average_salary
+SELECT departments.dept_name AS Department,
+ROUND(AVG(salaries.salary), 2) AS 'Average salary'
 FROM current_dept_emp
 JOIN departments ON current_dept_emp.dept_no = departments.dept_no
 JOIN salaries ON current_dept_emp.emp_no = salaries.emp_no
@@ -192,11 +204,11 @@ WHERE departments.dept_name IN ('Sales', 'Marketing')
 GROUP BY departments.dept_name;
 
 TULOSTUS:
-+-----------+----------------+
-| dept_name | average_salary |
-+-----------+----------------+
-| Marketing |       71951.96 |
-| Sales     |       80660.55 |
-+-----------+----------------+
++------------+----------------+
+| Department | Average salary |
++------------+----------------+
+| Marketing  |       71951.96 |
+| Sales      |       80660.55 |
++------------+----------------+
 
 **********************************************************************************************

@@ -31,10 +31,35 @@ mysql> show tables;
 +----------------+
 | Tables_in_pets |
 +----------------+
+| pet            |
++----------------+
+1 row in set (0.00 sec)
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<<< LUODAAN OWNER TAULU <<<<<<<<<<<<<<<<<<<<<<<<<<
+
+mysql> CREATE TABLE owner(	
+ -> first_name varchar(255),
+ -> last_name varchar(255),
+ -> address varchar(255),
+ -> ownerID int PRIMARY KEY AUTO_INCREMENT
+ -> );
+Query OK, 0 rows affected (0.03 sec)
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+mysql> show tables;
++----------------+
+| Tables_in_pets |
++----------------+
 | owner          |
 | pet            |
 +----------------+
 2 rows in set (0.01 sec)
+
+
+
+************************** OWNER TAULUN RAKENNE *************************
 
 mysql> desc owner;
 +------------+--------------+------+-----+---------+----------------+
@@ -46,6 +71,32 @@ mysql> desc owner;
 | ownerID    | int          | NO   | PRI | NULL    | auto_increment |
 +------------+--------------+------+-----+---------+----------------+
 4 rows in set (0.02 sec)
+*************************************************************************
+
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<< MUOKATAAN PET TAULUA <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+mysql> ALTER TABLE pet DROP COLUMN owner;
+Query OK, 0 rows affected (0.03 sec)
+Records: 0 Duplicates: 0 Warnings: 0
+
+mysql> ALTER TABLE pet ADD COLUMN petID INT PRIMARY KEY AUTO_INCREMENT;
+Query OK, 0 rows affected (0.12 sec)
+Records: 0 Duplicates: 0 Warnings: 0
+
+mysql> ALTER TABLE pet ADD COLUMN ownerID INT;
+Query OK, 0 rows affected (0.03 sec)
+Records: 0 Duplicates: 0 Warnings: 0
+
+mysql> ALTER TABLE pet ADD CONSTRAINT FOREIGN KEY(ownerID) REFERENCES owner(ownerID);
+Query OK, 8 rows affected (0.08 sec)
+Records: 8 Duplicates: 0 Warnings: 0
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+************************** PET TAULUN RAKENNE *************************
 
 mysql> desc pet;
 +---------+-------------+------+-----+---------+----------------+
@@ -60,48 +111,24 @@ mysql> desc pet;
 | ownerID | int         | YES  | MUL | NULL    |                |
 +---------+-------------+------+-----+---------+----------------+
 7 rows in set (0.00 sec)
+***********************************************************************
 
-mysql> select * from pet;
-+----------+---------+------+------------+------------+-------+---------+
-| name     | species | sex  | birth      | death      | petID | ownerID |
-+----------+---------+------+------------+------------+-------+---------+
-| Fluffy   | cat     | f    | 1993-02-04 | NULL       |     1 |       1 |
-| Claws    | cat     | m    | 1994-03-17 | NULL       |     2 |       2 |
-| Buffy    | dog     | f    | 1989-05-13 | NULL       |     3 |       1 |
-| Fang     | dog     | m    | 1990-08-27 | NULL       |     4 |       3 |
-| Bowser   | dog     | m    | 1998-08-31 | 1995-07-29 |     5 |       4 |
-| Chirpy   | bird    | f    | 1998-09-11 | 2000-09-15 |     6 |       2 |
-| Whistler | bird    |      | 1997-12-09 | NULL       |     7 |       2 |
-| Slim     | snake   | m    | 1996-04-29 | NULL       |     8 |       3 |
-+----------+---------+------+------------+------------+-------+---------+
-8 rows in set (0.00 sec)
 
-mysql> select * from owner;
-+------------+-----------+---------------+---------+
-| first_name | last_name | address       | ownerID |
-+------------+-----------+---------------+---------+
-| Harold     | Lloyd     | Someaddress 1 |       1 |
-| Gwen       | Stefani   | Someaddress 2 |       2 |
-| Benny      | Hill      | Someaddress 3 |       3 |
-| Diane      | Keaton    | Someaddress 4 |       4 |
-+------------+-----------+---------------+---------+
-4 rows in set (0.00 sec)
-
-mysql> SELECT owner.ownerID, CONCAT(owner.first_name, ' ', owner.last_name) AS owner,
-    -> pet.name AS pet_name, pet.species, pet.sex, pet.birth, pet.death, pet.petID
+mysql> SELECT owner.ownerID, CONCAT(owner.first_name, ' ', owner.last_name) AS owner, owner.address,
+    -> pet.petID, pet.name AS pet_name, pet.species, pet.sex, pet.birth, pet.death 
     -> FROM owner
     -> JOIN pet ON owner.ownerID = pet.ownerID
     -> ORDER BY owner, pet.name;
-+---------+--------------+----------+---------+------+------------+------------+-------+
-| ownerID | owner        | pet_name | species | sex  | birth      | death      | petID |
-+---------+--------------+----------+---------+------+------------+------------+-------+
-|       3 | Benny Hill   | Fang     | dog     | m    | 1990-08-27 | NULL       |     4 |
-|       3 | Benny Hill   | Slim     | snake   | m    | 1996-04-29 | NULL       |     8 |
-|       4 | Diane Keaton | Bowser   | dog     | m    | 1998-08-31 | 1995-07-29 |     5 |
-|       2 | Gwen Stefani | Chirpy   | bird    | f    | 1998-09-11 | 2000-09-15 |     6 |
-|       2 | Gwen Stefani | Claws    | cat     | m    | 1994-03-17 | NULL       |     2 |
-|       2 | Gwen Stefani | Whistler | bird    |      | 1997-12-09 | NULL       |     7 |
-|       1 | Harold Lloyd | Buffy    | dog     | f    | 1989-05-13 | NULL       |     3 |
-|       1 | Harold Lloyd | Fluffy   | cat     | f    | 1993-02-04 | NULL       |     1 |
-+---------+--------------+----------+---------+------+------------+------------+-------+
-8 rows in set (0.00 sec)
++---------+--------------+---------------+-------+----------+---------+------+------------+------------+
+| ownerID | owner        | address       | petID | pet_name | species | sex  | birth      | death      |
++---------+--------------+---------------+-------+----------+---------+------+------------+------------+
+|       3 | Benny Hill   | Someaddress 3 |     4 | Fang     | dog     | m    | 1990-08-27 | NULL       |
+|       3 | Benny Hill   | Someaddress 3 |     8 | Slim     | snake   | m    | 1996-04-29 | NULL       |
+|       4 | Diane Keaton | Someaddress 4 |     5 | Bowser   | dog     | m    | 1998-08-31 | 1995-07-29 |
+|       2 | Gwen Stefani | Someaddress 2 |     6 | Chirpy   | bird    | f    | 1998-09-11 | 2000-09-15 |
+|       2 | Gwen Stefani | Someaddress 2 |     2 | Claws    | cat     | m    | 1994-03-17 | NULL       |
+|       2 | Gwen Stefani | Someaddress 2 |     7 | Whistler | bird    |      | 1997-12-09 | NULL       |
+|       1 | Harold Lloyd | Someaddress 1 |     3 | Buffy    | dog     | f    | 1989-05-13 | NULL       |
+|       1 | Harold Lloyd | Someaddress 1 |     1 | Fluffy   | cat     | f    | 1993-02-04 | NULL       |
++---------+--------------+---------------+-------+----------+---------+------+------------+------------+
+8 rows in set (0.02 sec)

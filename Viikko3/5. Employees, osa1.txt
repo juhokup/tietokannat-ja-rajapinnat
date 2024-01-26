@@ -3,43 +3,51 @@ Tietokannat ja rajapinnat
 
 a) Minkä nimisiä osastoja (Departments) Employees-tietokannassa on ?
 
-VASTAUS: SELECT * FROM departments;
+VASTAUS: 
+SELECT dept_name FROM departments;
+
 TULOSTUS:
-+---------+--------------------+
-| dept_no | dept_name          |
-+---------+--------------------+
-| d009    | Customer Service   |
-| d005    | Development        |
-| d002    | Finance            |
-| d003    | Human Resources    |
-| d001    | Marketing          |
-| d004    | Production         |
-| d006    | Quality Management |
-| d008    | Research           |
-| d007    | Sales              |
-+---------+--------------------+
++--------------------+
+| dept_name          |
++--------------------+
+| Customer Service   |
+| Development        |
+| Finance            |
+| Human Resources    |
+| Marketing          |
+| Production         |
+| Quality Management |
+| Research           |
+| Sales              |
++--------------------+
 **********************************************************************************************
 
 b) Tulosta, (yhden kerran kukin) mitä nimikkeitä (title) tietokannassa on.
 
-VASTAUS: mysql> SELECT DISTINCT title FROM titles;
+VASTAUS: 
+SELECT DISTINCT title AS Titles FROM titles
+ORDER BY title;
+
 TULOSTUS:
 +--------------------+
-| title              |
+| Titles             |
 +--------------------+
-| Senior Engineer    |
-| Staff              |
-| Engineer           |
-| Senior Staff       |
 | Assistant Engineer |
-| Technique Leader   |
+| Engineer           |
 | Manager            |
+| Senior Engineer    |
+| Senior Staff       |
+| Staff              |
+| Technique Leader   |
 +--------------------+
 **********************************************************************************************
 
 c) Mikä on suurin ja pienin palkka (salary) ? VIHJE: MIN, MAX
 
-VASTAUS: SELECT MAX(salary) AS max_salary, MIN(salary) AS min_salary FROM salaries;
+VASTAUS: 
+SELECT MAX(salary) AS max_salary, MIN(salary) AS min_salary 
+FROM salaries;
+
 TULOSTUS:
 +------------+------------+
 | max_salary | min_salary |
@@ -50,20 +58,24 @@ TULOSTUS:
 
 d) Mikä on keskimääräinen palkka ? VIHJE: AVG
 
-VASTAUS: SELECT AVG(salary) AS average_salary FROM salaries;
+VASTAUS: ROUND pyöristää tuon kakkosen perusteella kahden desimaalin tarkkuuteen
+
+SELECT ROUND(AVG(salary),2) AS average_salary FROM salaries;
+
 TULOSTUS:
 +----------------+
 | average_salary |
 +----------------+
-|     63810.7448 |
+|       63810.74 |
 +----------------+
 **********************************************************************************************
 
 e) Tulosta kaikki työntekijät, joiden sukunimi on Facello.
 
-VASTAUS: SELECT * FROM employees WHERE last_name = 'Facello';
+VASTAUS: 
+SELECT * FROM employees WHERE last_name = 'Facello';
 
-TULOSTUS: (Vain osa. Alkuperäisen tulostuksen pituus 186 riviä)
+TULOSTUS: 185 riviä pitkä, kopioitu vain osa
 +--------+------------+-------------+-----------+--------+------------+
 | emp_no | birth_date | first_name  | last_name | gender | hire_date  |
 +--------+------------+-------------+-----------+--------+------------+
@@ -81,20 +93,25 @@ TULOSTUS: (Vain osa. Alkuperäisen tulostuksen pituus 186 riviä)
 
 f) Kuinka moni työntekijä on syntynyt 1950-luvulla ?
 
-VASTAUS 1: SELECT COUNT(*) FROM employees WHERE YEAR(birth_date) BETWEEN 1950 AND 1959;
-VASTAUS 2: SELECT COUNT(*) FROM employees WHERE birth_date BETWEEN '1950-01-01' AND '1959-12-31';
+VASTAUS: 
+SELECT COUNT(*) AS 'Born in the 50s' 
+FROM employees 
+WHERE YEAR(birth_date) BETWEEN 1950 AND 1959;
 
-TULOSTUS: molemmat vastaukset palauttavat saman tulostuksen
-+----------+
-| COUNT(*) |
-+----------+
-|   182886 |
-+----------+
+
+TULOSTUS:
++-----------------+
+| Born in the 50s |
++-----------------+
+|          182886 |
++-----------------+
 **********************************************************************************************
 
 g) Montako miestä ja montako naista työntekijöissä on?
 
-VASTAUS: SELECT gender, COUNT(*) AS count FROM employees GROUP BY gender;
+VASTAUS: 
+SELECT gender, COUNT(*) AS count FROM employees GROUP BY gender;
+
 TULOSTUS:
 +--------+--------+
 | gender | count  |
